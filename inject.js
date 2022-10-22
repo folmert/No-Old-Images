@@ -1,20 +1,32 @@
 // this is the code which will be injected into a given page...
 
-const generateFile = (function () {
-    let a = document.createElement("a");
-    document.body.appendChild(a);
-    a.style = "display: none";
-    return function (data, fileName) {
-        let blob = new Blob([data], { type: "octet/stream" });
-        let url = window.URL.createObjectURL(blob);
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        window.URL.revokeObjectURL(url);
-    };
-}());
-
 (function () {
+    const generateFile = (function () {
+        let a = document.createElement("a");
+        document.body.appendChild(a);
+        a.style = "display: none";
+        return function (data, fileName) {
+            let blob = new Blob([data], { type: "octet/stream" });
+            let url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+    }());
+
+    const rightClick = function (element) {
+        var evt = element.ownerDocument.createEvent('MouseEvents');
+
+        var RIGHT_CLICK_BUTTON_CODE = 2;
+
+        evt.initMouseEvent('click', true, true,
+            element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
+            false, false, false, RIGHT_CLICK_BUTTON_CODE, null);
+
+        return !element.dispatchEvent(evt);
+    }
+
     if (window.location.href.indexOf("tbm=isch") === -1) {
         alert("Please use No Old Images only on google image search");
         return;
@@ -25,10 +37,20 @@ const generateFile = (function () {
 
     // click on each not clicked links to generate their hrefs
     (function myLoop (i) {
-        if (!imagesNotClicked[i]) return;
-        imagesNotClicked[i].click();
-        imagesNotClicked[i].click(); // TODO: click 'x' after div[role="main"] rather than clicking twice on img
-        if (--i) myLoop(i); // decrement i and call myLoop again if i > 0
+        setTimeout(function () {
+            if (!imagesNotClicked[i]) return;
+
+            rightClick(imagesNotClicked[i]);
+
+            // close img with 'x'
+            setTimeout(function () {
+                if (document.querySelectorAll('div[role="main"] + div svg')[0]?.closest('div')) {
+                    document.querySelectorAll('div[role="main"] + div svg')[0].closest('div').click();
+                }
+            }, 2);
+
+        }, 30);
+        if (--i && i > 1) myLoop(i); // decrement i and call myLoop again if i > 1
     })(imagesNotClicked.length - 1);
 
     // get links of clicked imgs
@@ -42,7 +64,7 @@ const generateFile = (function () {
 
     // google divs have bg color, so hide them instead images
     let hrefsAsCssSelectors = hrefs.map(href => `a[href^="${href}"] div`);
-    let cssString = `${hrefsAsCssSelectors.join()} { visibility: hidden }`;
+    let cssString = `${hrefsAsCssSelectors.join()} { opacity: 0.2 }`;
 
     generateFile(cssString, 'No-Old-Images.css');
 })();
