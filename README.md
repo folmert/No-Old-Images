@@ -1,5 +1,5 @@
 # No Old Images (NOI, /neu̯/)
-Simplifies searching for fresh content by generating CSS to hide already displayed images. You can paste the generated CSS into a style manager (i.e. [Stylus](https://chrome.google.com/webstore/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne)) to make it active permanently. Currently works only with Google Images and since it originally displays almost all images only in base64 it requires running NOI to generate `href` on each linked image that Google Images display, in order to make CSS selectors valid.
+Simplifies searching for fresh content by generating CSS to hide already displayed images. You can paste the generated CSS into a style manager (i.e. [Stylus](https://chrome.google.com/webstore/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne)) to make it active permanently. Currently works only with Google Images and since it originally displays almost all images in base64 it requires running NOI to generate `href` on each linked image in order to make CSS selectors valid.
 
 ## Showcase
 
