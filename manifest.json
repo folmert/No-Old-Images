@@ -6,7 +6,7 @@
   "action": {
     "default_icon": "icon.jpg",
     "default_popup": "popup.html",
-    "default_title": "Click here!"
+    "default_title": "No Old Images"
   },
   "permissions": [
     "activeTab",
