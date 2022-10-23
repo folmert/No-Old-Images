@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "No Old Images",
-  "description": "Simplifies searching for fresh content by generating CSS to hide already displayed images. You can paste the CSS into a style manager (i.e. Stylus). Currently works only with google images.",
+  "description": "Simplifies searching for fresh content by generating CSS to hide already displayed images. You can paste the CSS into a style manager (i.e. Stylus). Currently works only with Google Images.",
   "version": "1.0",
   "action": {
     "default_icon": "icon.jpg",

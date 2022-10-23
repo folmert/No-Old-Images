@@ -1,5 +1,4 @@
 // this is the code which will be injected into a given page...
-// max lines generated so far: 535
 
 (function () {
     const generateFile = (function () {
@@ -30,35 +29,14 @@
     // get not clicked images
     let imagesNotClicked = document.querySelectorAll('div[data-id] a:not([href])');
 
-    let preloader = document.createElement('div');
-    preloader.innerText = 'Generating hrefs, please wait...'
-    preloader.classList.add('preloader');
-    preloader.style.cssText = 'display:flex;justify-content:center;align-items:center;color:white;font-size:60px;cursor:wait,pointer-event:none;position:fixed;top:0;left:0;width:100%;height:100%;opacity:0.6;z-index:100;background:#000;';
-    document.body.appendChild(preloader);
-    document.querySelector('body').style.cssText = 'overflow-y:hidden';
-
     // click on each not clicked links to generate their hrefs
-    let delay = ms => new Promise(resolve => setTimeout(resolve, ms));
     let generateHrefs = async function () {
         for (let i = 0; i < imagesNotClicked.length; i++) {
-            if (!imagesNotClicked[i]) return;
             triggerMouseEvent(imagesNotClicked[i], "mousedown");
         }
-
-        await delay(3); // creates a Promise and resolves it after 30 ms, perhaps not needed anymore
     };
 
     generateHrefs().then(() => {
-        preloader.remove();
-        document.querySelector('body').style.cssText = '';
-
-        // close img with 'x'
-        setTimeout(function () {
-            if (document.querySelectorAll('div[role="main"] + div svg')[0]?.closest('div')) {
-                document.querySelectorAll('div[role="main"] + div svg')[0].closest('div').click();
-            }
-        }, 2);
-
         // get links of clicked imgs
         let imagesClicked = document.querySelectorAll('div[data-id] a:not([target="_blank"])')
 
@@ -66,7 +44,7 @@
         let hrefs = Array.from(imagesClicked)
             .filter(i => i.href.length && i.href)
             .map(i => i.href.split('&')[0] // first param is imgurl
-                .split('https://www.google.com')[1]); // we don't need absolute path
+            .split('https://www.google.com')[1]); // we don't need absolute path
 
         // google divs have bg color, so hide them instead images
         let hrefsAsCssSelectors = hrefs.map(href => `a[href^="${href}"] div`);
