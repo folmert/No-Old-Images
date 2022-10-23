@@ -1,5 +1,5 @@
 # No Old Images
-Simplifies searching for fresh content by generating CSS to hide already displayed images. You can paste the CSS into a style manager (i.e. Stylus). Currently works only with google images.
+Simplifies searching for fresh content by generating CSS to hide already displayed images. You can paste the CSS into a style manager (i.e. [Stylus](https://chrome.google.com/webstore/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne)). Currently works only with google images.
 
 ## Example
 
