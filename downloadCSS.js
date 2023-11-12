@@ -5,7 +5,7 @@
     let result = await getElementsFromStorage()
     let storedElements = result.storedElements
 
-    let cssString = elementsToStyleTag(chunkSelectors(storedElements, 2000))
+    let cssString = elementsToCss(chunkSelectors(storedElements, 2000))
 
     generateFile(cssString, 'No-Old-Images.css');
 })();

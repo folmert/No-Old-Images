@@ -1,47 +1,56 @@
 if (window.location.href.indexOf("tbm=isch") === -1) {
-	// console.log("this is not google image search");
+	console.log("this is not google image search");
 }
 
 /**
  * Transform array of elements to CSS and append as <style> tag
  */ 
 function elementsToStyleTag(elements) {
-	// console.log('elementsToStyleTag');
+	console.log('elementsToStyleTag');
+	let cssString = elementsToCss(elements)
+    appendCssToStyleTag(cssString)
+}
 
-	let cssString = ''
-	elements.forEach(selectors => {
-            cssString += `${selectors.join(',\n')} { opacity: 0.1 }\n`; // each chunk gets a separate CSS rule
-        })
-
-    cssString = cssString.replace(/"%27"/g, "\'"); // in the browser %27 is sometimes automatically transformed to '
-
+function appendCssToStyleTag(cssString) {
     let style = document.createElement('style');
     style.innerHTML = cssString;
     document.head.appendChild(style);
 
-    // console.log('<style> tag has been added')
-    return cssString
+    console.log('<style> tag has been added')
 }
 
-/**
+function elementsToCss(elements) {
+    let cssString = ''
+    elements.forEach(selectors => {
+            cssString += `${selectors.join(',\n')} { opacity: 0.1 }\n`; // each chunk gets a separate CSS rule
+        })
+
+    return cssString.replace(/"%27"/g, "\'"); // in the browser %27 is sometimes automatically transformed to '
+}
+
+/*
  * Get currently stored elements
  */ 
 async function getElementsFromStorage() {
-	return await chrome.storage.local.get(["storedElements"]).then((result) => {
-        // console.log("Last 5 stored elements: ", result?.storedElements.slice(-5), ', total elements: ' + result?.storedElements?.length);
+	return await chrome.storage.local.get(["storedElements"])
+    .then((result) => {
+        console.log("All stored elements: ", [result?.storedElements], "Last 5 stored elements: ", result?.storedElements?.slice(-5), 'total elements: ' + result?.storedElements?.length);
 
         return result
-    });
+    })
+    .catch((error) => {
+        console.error(error)
+    })
 }
 
 /**
  * Persistently store elements to be hidden as storedElements
  */ 
 async function storeElements(elements) {
-	// console.log('storeElements');
+	console.log('storeElements');
 
 	await chrome.storage.local.set({ storedElements: elements }).then(() => {
-		// console.log("elements have been stored");
+		console.log("elements have been stored");
 	});
 
 	await getElementsFromStorage();
@@ -52,7 +61,7 @@ async function storeElements(elements) {
  * Needed because if a single css rule contains over 4096 selectors it creates an overflow on selector specificity
  **/
 function chunkSelectors(selectors, chunkSize) {
-	// console.log('chunkSelectors');
+	console.log('chunkSelectors');
 
 	return Array.from({length: Math.ceil(selectors.length / chunkSize)}, (_, i) =>
 		selectors.slice(i * chunkSize, i * chunkSize + chunkSize)
@@ -60,10 +69,10 @@ function chunkSelectors(selectors, chunkSize) {
 }
 
 /**
- *  Add new found elements to stored elements without duplicates
+ * Add new found elements to stored elements without duplicates
  */ 
 function mergeSelectors(oldSelectors, newSelectors) {
-	// console.log('mergeSelectors')
+	console.log('mergeSelectors')
 
 	return Array.from(new Set([...(oldSelectors ?? []), ...newSelectors]));
 }
@@ -73,7 +82,7 @@ function mergeSelectors(oldSelectors, newSelectors) {
  * (needed only by google images)
  */ 
 async function clickOnLinkedImages() {
-	// console.log('clickOnAllLinkedImages')
+	console.log('clickOnAllLinkedImages')
 
 	let triggerMouseEvent = function triggerMouseEvent (node, eventType) {
 		let clickEvent = document.createEvent('MouseEvents');
@@ -91,10 +100,10 @@ async function clickOnLinkedImages() {
 }
 
 /**
- *  Click on each not clicked links to generate their hrefs
+ * Click on each not clicked links to generate their hrefs
  */ 
 function clickedImagesToSelectors() {
-	// console.log('clickedImagesToSelectors')
+	console.log('clickedImagesToSelectors')
 
 	// get links of clicked imgs
 	let imagesClicked = document.querySelectorAll('div[data-id] a:not([target="_blank"])')
@@ -116,6 +125,8 @@ function clickedImagesToSelectors() {
  * Creates a file for downloading
  */ 
 const generateFile = (function () {
+    console.log('generateFile')
+
         let a = document.createElement("a");
         document.body.appendChild(a);
         a.style = "display: none";
