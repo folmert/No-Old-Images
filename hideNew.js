@@ -2,12 +2,7 @@
     // get old stored selectors
     let result = await getElementsFromStorage()
 
-      console.log(0)
-
     let storedElements = result.storedElements
-    // let storedElements = test
-
-    console.log(1, storedElements)
 
     // update selectors
     await clickOnLinkedImages()
