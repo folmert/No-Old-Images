@@ -6,12 +6,18 @@
 
     // update selectors
     await clickOnLinkedImages()
-    hrefsAsCssSelectors = clickedImagesToSelectors()
-    hrefsAsCssSelectors = mergeSelectors(storedElements, hrefsAsCssSelectors)
+    const hrefsAsCssSelectors = clickedImagesToSelectors()
+    
+    console.log('hrefsAsCssSelectors', hrefsAsCssSelectors);
+
+    const mergedSelectors = mergeSelectors(storedElements, hrefsAsCssSelectors)
+
+    console.log('mergedSelectors', mergedSelectors);
+
     storeElements(hrefsAsCssSelectors)
 
     // append style tag
-    let chunkedSelectors = chunkSelectors(hrefsAsCssSelectors, 2000)
+    let chunkedSelectors = chunkSelectors(mergedSelectors, 2000)
     elementsToStyleTag(chunkedSelectors)
 
     // TODO: automatically click on links when scrolling? so that CSS is activated

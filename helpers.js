@@ -16,7 +16,7 @@ function appendCssToStyleTag(cssString) {
     style.innerHTML = cssString;
     document.head.appendChild(style);
 
-    console.log('<style> tag has been added')
+    console.log('<style> tag has been added', style)
 }
 
 function elementsToCss(elements) {
@@ -89,12 +89,13 @@ async function clickOnLinkedImages() {
 		clickEvent.initEvent(eventType, true, true);
 		node.dispatchEvent(clickEvent);
 	}
-	let imagesNotClicked = document.querySelectorAll('div[data-id] a:not([href])');
+	let imagesNotClicked = document.querySelectorAll('div[data-hveid] a:not([href]) [jsslot] > div');
 
 	for (let i = 0; i < imagesNotClicked.length; i++) {
 		// do not click on already hidden images
 		if (getComputedStyle(imagesNotClicked[i]).getPropertyValue("opacity") !== '0.1') {
-			triggerMouseEvent(imagesNotClicked[i], "mousedown");
+            triggerMouseEvent(imagesNotClicked[i], "mouseover");
+            // console.log(imagesNotClicked[i].parentElement.parentElement.parentElement);
 		}
 	}
 }
@@ -106,16 +107,17 @@ function clickedImagesToSelectors() {
 	console.log('clickedImagesToSelectors')
 
 	// get links of clicked imgs
-	let imagesClicked = document.querySelectorAll('div[data-id] a:not([target="_blank"])')
+	let imagesClicked = document.querySelectorAll('div[data-hveid] a:not([target="_blank"])')
 
     // get hrefs of clicked links
 	let hrefs = Array.from(imagesClicked)
-					.filter(i => i.href.length && i.href)
-            		.map(i => i.href.split('&')[0] // first param is imgurl
-            		.split('https://www.google.com')[1]); // we don't need absolute path
+					.filter(i => i.href.length && i.href && !i.href.includes('/search?'))
+                    .map(i => i.href.split('&imgurl=')[1])
+            		.map(i => i && i.split('&imgrefurl=')[0])
+                    .filter(i => !!i);
 
     // google divs have bg color, so hide them instead images
-    let hrefsAsCssSelectors = hrefs.map(href => `a[href^="${href}"] div`);
+    let hrefsAsCssSelectors = hrefs.map(href => `a[href*="${href}"] div`);
     hrefsAsCssSelectors.sort();
 
     return hrefsAsCssSelectors
@@ -127,15 +129,15 @@ function clickedImagesToSelectors() {
 const generateFile = (function () {
     console.log('generateFile')
 
-        let a = document.createElement("a");
-        document.body.appendChild(a);
-        a.style = "display: none";
-        return function (data, fileName) {
-            let blob = new Blob([data], { type: "octet/stream" });
-            let url = window.URL.createObjectURL(blob);
-            a.href = url;
-            a.download = fileName;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        };
-    }());
+    let a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    return function (data, fileName) {
+        let blob = new Blob([data], { type: "octet/stream" });
+        let url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    };
+}());
